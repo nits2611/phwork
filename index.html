@@ -1,0 +1,325 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Space — Personal App Store</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0c0e14;
+    --panel: #141720;
+    --border: #272b38;
+    --text: #f4f5fb;
+    --muted: #9298aa;
+    --accent: #a78bfa;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    min-height: 100vh;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  .container { max-width: 1160px; margin: auto; padding: 0 26px; }
+
+  header {
+    height: 78px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #20232d;
+  }
+
+  .brand { display: flex; align-items: center; gap: 11px; font-size: 19px; font-weight: 750; }
+  .brand-icon {
+    display: grid; place-items: center;
+    width: 38px; height: 38px; border-radius: 12px;
+    background: linear-gradient(135deg, #a78bfa, #6366f1);
+    font-size: 21px;
+  }
+
+  .nav { display: flex; align-items: center; gap: 22px; color: var(--muted); font-size: 13px; }
+  .nav a:hover { color: white; }
+
+  .hero { padding: 68px 0 42px; }
+  .eyebrow { color: #b6a3ff; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+  h1 { font-size: clamp(35px, 5vw, 56px); line-height: 1.1; letter-spacing: -2px; margin: 17px 0; }
+  h1 span {
+    background: linear-gradient(90deg, #c4b5fd, #818cf8, #67e8f9);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero p { color: var(--muted); font-size: 15px; line-height: 1.8; max-width: 540px; }
+
+  .toolbar {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; margin: 15px 0 28px; flex-wrap: wrap;
+  }
+
+  .search {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--panel); border: 1px solid var(--border);
+    padding: 0 15px; border-radius: 12px; width: min(100%, 340px);
+  }
+  .search input {
+    background: transparent; border: 0; outline: none;
+    padding: 13px 0; width: 100%; color: white; font: inherit; font-size: 13px;
+  }
+
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; }
+  .filter {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--muted); border-radius: 9px; padding: 9px 13px;
+    font: inherit; font-size: 12px; cursor: pointer; transition: .2s;
+  }
+  .filter:hover, .filter.active {
+    color: white; border-color: #8170d8; background: #29233f;
+  }
+
+  .section-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+  h2 { font-size: 19px; letter-spacing: -.4px; }
+  .count { color: var(--muted); font-size: 12px; }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 17px; padding-bottom: 65px; }
+
+  .app-card {
+    background: linear-gradient(145deg, #171a25, #12141c);
+    border: 1px solid var(--border); border-radius: 18px;
+    padding: 21px; transition: transform .2s, border-color .2s;
+    display: flex; flex-direction: column; min-height: 235px;
+  }
+  .app-card:hover { transform: translateY(-4px); border-color: #62558f; }
+
+  .app-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .app-icon {
+    width: 54px; height: 54px; border-radius: 16px;
+    display: grid; place-items: center; font-size: 26px;
+    box-shadow: inset 0 1px 0 #ffffff25;
+  }
+  .purple { background: linear-gradient(135deg, #a78bfa, #6d5ce7); }
+  .blue { background: linear-gradient(135deg, #60a5fa, #2563eb); }
+  .green { background: linear-gradient(135deg, #6ee7b7, #059669); }
+  .orange { background: linear-gradient(135deg, #fdba74, #ea580c); }
+  .pink { background: linear-gradient(135deg, #f9a8d4, #db2777); }
+  .cyan { background: linear-gradient(135deg, #67e8f9, #0891b2); }
+
+  .tag {
+    font-size: 10px; color: #b5a7ff; background: #29233f;
+    padding: 6px 9px; border-radius: 7px;
+  }
+
+  .app-card h3 { font-size: 16px; margin: 19px 0 7px; }
+  .app-card p { color: var(--muted); font-size: 12px; line-height: 1.7; flex: 1; }
+  .app-bottom {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 20px; padding-top: 15px; border-top: 1px solid #282b36;
+  }
+  .app-type { color: #9ba1b3; font-size: 11px; }
+  .open-btn {
+    font-size: 12px; font-weight: 650; color: #d4ccff;
+    background: #30274d; border: 1px solid #463968;
+    border-radius: 8px; padding: 8px 13px; cursor: pointer;
+  }
+  .open-btn:hover { background: #443667; }
+
+  .empty { display: none; text-align: center; color: var(--muted); padding: 45px 0; grid-column: 1/-1; }
+
+  .about {
+    background: radial-gradient(ellipse at top left, #272044, #151722 65%);
+    border: 1px solid var(--border); border-radius: 20px;
+    padding: 29px; display: flex; align-items: center;
+    justify-content: space-between; gap: 25px; margin-bottom: 55px;
+  }
+  .about h2 { margin-bottom: 9px; }
+  .about p { color: var(--muted); font-size: 13px; line-height: 1.8; max-width: 600px; }
+  .about-icon { font-size: 36px; }
+
+  footer {
+    border-top: 1px solid #20232d; padding: 24px 0;
+    display: flex; justify-content: space-between; gap: 12px;
+    color: var(--muted); font-size: 12px;
+  }
+
+  @media (max-width: 800px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .hero { padding-top: 48px; }
+  }
+  @media (max-width: 540px) {
+    .container { padding: 0 17px; }
+    .nav a:not(:last-child) { display: none; }
+    .grid { grid-template-columns: 1fr; }
+    .toolbar { align-items: stretch; }
+    .search { width: 100%; }
+    .about { padding: 22px; }
+    footer { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <a class="brand" href="#">
+      <span class="brand-icon">✳</span>
+      <span>my<span style="color:#b6a3ff">space</span></span>
+    </a>
+    <nav class="nav">
+      <a href="#apps">My collection</a>
+      <a href="#about">About</a>
+      <a href="https://github.com/" target="_blank" rel="noopener">GitHub ↗</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="eyebrow">✦ A little corner of the internet</div>
+    <h1>Things I've built.<br><span>All in one place.</span></h1>
+    <p>
+      Welcome to my personal app collection — a home for my experiments,
+      side projects, useful tools, and little ideas brought to life.
+    </p>
+  </section>
+
+  <section id="apps">
+    <div class="toolbar">
+      <label class="search">
+        <span>⌕</span>
+        <input id="search" type="search" placeholder="Search my collection..." aria-label="Search apps">
+      </label>
+      <div class="filters" aria-label="Filter apps">
+        <button class="filter active" data-category="All">All projects</button>
+        <button class="filter" data-category="Tools">Tools</button>
+        <button class="filter" data-category="Web">Web apps</button>
+        <button class="filter" data-category="Experiments">Experiments</button>
+      </div>
+    </div>
+
+    <div class="section-heading">
+      <h2>My collection</h2>
+      <span class="count" id="count">6 projects</span>
+    </div>
+
+    <div class="grid" id="grid">
+      <article class="app-card" data-category="Tools" data-search="focus timer productivity pomodoro">
+        <div class="app-top">
+          <div class="app-icon purple">◷</div><span class="tag">POPULAR</span>
+        </div>
+        <h3>Focus Timer</h3>
+        <p>A simple productivity companion to help me focus, work deeply, and take breaks.</p>
+        <div class="app-bottom"><span class="app-type">⌘ Productivity</span>
+          <a class="open-btn" href="#" target="_blank" rel="noopener">Open ↗</a></div>
+      </article>
+
+      <article class="app-card" data-category="Web" data-search="personal portfolio website profile">
+        <div class="app-top">
+          <div class="app-icon blue">✧</div><span class="tag">WEB APP</span>
+        </div>
+        <h3>My Portfolio</h3>
+        <p>A home for my work, projects, skills, and everything I'm learning along the way.</p>
+        <div class="app-bottom"><span class="app-type">◈ Portfolio</span>
+          <a class="open-btn" href="#" target="_blank" rel="noopener">Open ↗</a></div>
+      </article>
+
+      <article class="app-card" data-category="Tools" data-search="notes writing notebook ideas">
+        <div class="app-top">
+          <div class="app-icon green">✎</div><span class="tag">UTILITY</span>
+        </div>
+        <h3>Quick Notes</h3>
+        <p>A lightweight space for capturing quick thoughts, ideas, and things to remember.</p>
+        <div class="app-bottom"><span class="app-type">✳ Productivity</span>
+          <a class="open-btn" href="#" target="_blank" rel="noopener">Open ↗</a></div>
+      </article>
+
+      <article class="app-card" data-category="Experiments" data-search="color palette design colors creative">
+        <div class="app-top">
+          <div class="app-icon orange">◉</div><span class="tag">EXPERIMENT</span>
+        </div>
+        <h3>Color Playground</h3>
+        <p>A fun little experiment for exploring colors, palettes, and visual combinations.</p>
+        <div class="app-bottom"><span class="app-type">✦ Design</span>
+          <a class="open-btn" href="#" target="_blank" rel="noopener">Open ↗</a></div>
+      </article>
+
+      <article class="app-card" data-category="Web" data-search="link hub bookmarks resources">
+        <div class="app-top">
+          <div class="app-icon pink">↗</div><span class="tag">WEB APP</span>
+        </div>
+        <h3>Link Hub</h3>
+        <p>My favorite resources, websites, and useful links collected in one convenient place.</p>
+        <div class="app-bottom"><span class="app-type">⌘ Resources</span>
+          <a class="open-btn" href="#" target="_blank" rel="noopener">Open ↗</a></div>
+      </article>
+
+      <article class="app-card" data-category="Experiments" data-search="weather dashboard API experiment">
+        <div class="app-top">
+          <div class="app-icon cyan">☼</div><span class="tag">IN PROGRESS</span>
+        </div>
+        <h3>Weather Dashboard</h3>
+        <p>An experiment in building a clean dashboard and working with external APIs.</p>
+        <div class="app-bottom"><span class="app-type">◈ Dashboard</span>
+          <a class="open-btn" href="#" target="_blank" rel="noopener">Open ↗</a></div>
+      </article>
+
+      <div class="empty" id="empty">No projects found. Try another search.</div>
+    </div>
+  </section>
+
+  <section class="about" id="about">
+    <div>
+      <h2>Made with curiosity. ✨</h2>
+      <p>This is my personal corner to showcase things I create, ideas I explore,
+      and projects I'm proud of. More little creations coming soon.</p>
+    </div>
+    <div class="about-icon">🚀</div>
+  </section>
+
+  <footer>
+    <span>© <span id="year"></span> My Space. Made by me, for me.</span>
+    <span>A collection of ideas & experiments ✦</span>
+  </footer>
+</div>
+
+<script>
+  const search = document.getElementById('search');
+  const cards = [...document.querySelectorAll('.app-card')];
+  const filters = [...document.querySelectorAll('.filter')];
+  const count = document.getElementById('count');
+  const empty = document.getElementById('empty');
+  let category = 'All';
+
+  function updateProjects() {
+    const query = search.value.toLowerCase().trim();
+    let visible = 0;
+
+    cards.forEach(card => {
+      const matchesCategory = category === 'All' || card.dataset.category === category;
+      const matchesSearch = (card.dataset.search + ' ' + card.innerText)
+        .toLowerCase().includes(query);
+      const show = matchesCategory && matchesSearch;
+      card.style.display = show ? 'flex' : 'none';
+      if (show) visible++;
+    });
+
+    count.textContent = `${visible} project${visible === 1 ? '' : 's'}`;
+    empty.style.display = visible ? 'none' : 'block';
+  }
+
+  search.addEventListener('input', updateProjects);
+
+  filters.forEach(button => {
+    button.addEventListener('click', () => {
+      category = button.dataset.category;
+      filters.forEach(item => item.classList.toggle('active', item === button));
+      updateProjects();
+    });
+  });
+
+  document.getElementById('year').textContent = new Date().getFullYear();
+  updateProjects();
+</script>
+</body>
+</html>
